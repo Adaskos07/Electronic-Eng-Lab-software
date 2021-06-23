@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "task.h": "c",
+        "semphr.h": "c",
+        "timers.h": "c"
+    }
+}
