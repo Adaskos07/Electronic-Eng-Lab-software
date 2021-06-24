@@ -47,27 +47,25 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
                                     StackType_t ** ppxIdleTaskStackBuffer,
                                     uint32_t * pulIdleTaskStackSize );
 
-Car_t car_1 = {
-    .id = 1,
-    .direction = NW,
-    .poll_time = 12.4
-};
-Car_t car_2 = {
-    .id = 2,
-    .direction = NW,
-    .poll_time = 15
-};
 int main( void )
 {
 
-
-
-
+    Car_t car_1 = {
+        .id = 1,
+        .direction = NW,
+        .poll_time = 12.4
+    };
+    Car_t car_2 = {
+        .id = 2,
+        .direction = NW,
+        .poll_time = 15
+    };
 
 
     console_init();
-
-    xQueue = xQueueCreate(5, sizeof(int32_t));
+    xUnscheduledCarsQueue = xQueueCreate(10, sizeof(Car_t));
+    xScheduledCarsQueue = xQueueCreate(10, sizeof(Car_t));
+    // xQueue = xQueueCreate(10, sizeof(Car_t));
 
     xTaskCreate(vSchedulerTask, "Scheduler", 1000, NULL, 1, NULL);
     // xTaskCreate(vContinousTask, "Task_1", 1000, "CONTINOUS TASK 1", 1, NULL);
@@ -94,11 +92,11 @@ static void vSenderTask( void *pvParameters )
 
     for( ;; )
     {
-        console_print("SENDING CAR %d TO SCHEDULER", lValueToSend.id);
+        console_print("SENDING CAR %d TO SCHEDULER\n", lValueToSend.id);
         xStatus = xQueueSendToBack( xUnscheduledCarsQueue, &lValueToSend, 0 );
 
         if (xStatus != pdPASS) {
-            console_print("COULD NOT SEND");
+            console_print("COULD NOT SEND\n");
         }
         /* Delay for a period. */
         // vTaskDelayUntil(&xLastWakeTime, xDelay);
