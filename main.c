@@ -25,11 +25,16 @@
 #include "semphr.h"
 #include "console.h"
 
+#include "types.h"
+
 #include "scheduler_task.h"
 
-volatile uint32_t ulIdleCycleCount = 0UL;
-
 StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+
+
+
+QueueHandle_t xUnscheduledCarsQueue;
+QueueHandle_t xScheduledCarsQueue;
 
 QueueHandle_t xQueue;
 
@@ -42,21 +47,34 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
                                     StackType_t ** ppxIdleTaskStackBuffer,
                                     uint32_t * pulIdleTaskStackSize );
 
+Car_t car_1 = {
+    .id = 1,
+    .direction = NW,
+    .poll_time = 12.4
+};
+Car_t car_2 = {
+    .id = 2,
+    .direction = NW,
+    .poll_time = 15
+};
 int main( void )
 {
-    /* Perform any hardware setup necessary. */
-    // prvSetupHardware();
-    // /* --- APPLICATION TASKS CAN BE CREATED HERE --- */
-    // /* Start the created tasks running. */
+
+
+
+
+
+
     console_init();
 
     xQueue = xQueueCreate(5, sizeof(int32_t));
 
+    xTaskCreate(vSchedulerTask, "Scheduler", 1000, NULL, 1, NULL);
     // xTaskCreate(vContinousTask, "Task_1", 1000, "CONTINOUS TASK 1", 1, NULL);
     // xTaskCreate(vContinousTask, "Task_2", 1000, "CONTINOUS TASK 2", 1, NULL);
-    xTaskCreate(vSenderTask, "Sender_1", 1000, (void *)100, 1, NULL);
-    xTaskCreate(vSenderTask, "Sender_2", 1000, (void*)200, 1, NULL);
-    xTaskCreate(vReceiverTask, "Receiver", 1000, NULL, 2, NULL);
+    xTaskCreate(vSenderTask, "Sender_1", 1000, (void *)&car_1, 1, NULL);
+    xTaskCreate(vSenderTask, "Sender_2", 1000, (void*)&car_2, 1, NULL);
+    xTaskCreate(vReceiverTask, "Receiver", 1000, NULL, 1, NULL);
     // xTaskCreate(vPeriodicTask, "Task_3", 1000, "PERIODIC TASK 3", 10, NULL);
 
     vTaskStartScheduler();
@@ -68,15 +86,16 @@ int main( void )
 
 static void vSenderTask( void *pvParameters )
 {
-    int32_t lValueToSend;
+    Car_t lValueToSend;
     BaseType_t xStatus;
     
-    lValueToSend = ( int32_t ) pvParameters;
+    lValueToSend = *( Car_t* )pvParameters;
     // UBaseType_t uxPriority;
 
     for( ;; )
     {
-        xStatus = xQueueSendToBack( xQueue, &lValueToSend, 0 );
+        console_print("SENDING CAR %d TO SCHEDULER", lValueToSend.id);
+        xStatus = xQueueSendToBack( xUnscheduledCarsQueue, &lValueToSend, 0 );
 
         if (xStatus != pdPASS) {
             console_print("COULD NOT SEND");
@@ -88,7 +107,7 @@ static void vSenderTask( void *pvParameters )
 
 static void vReceiverTask( void *pvParameters )
 {
-    int32_t lReceivedValue;
+    Car_t lReceivedValue;
     BaseType_t xStatus;
     const TickType_t xTicksToWait = pdMS_TO_TICKS( 100 );
 
@@ -96,16 +115,16 @@ static void vReceiverTask( void *pvParameters )
     /* As per most tasks, this task is implemented in an infinite loop. */
     for( ;; )
     {
-        if (uxQueueMessagesWaiting(xQueue) != 0)
+        if (uxQueueMessagesWaiting(xScheduledCarsQueue) != 0)
         {
             console_print("Queue should have been empty\r\n");
         }
 
-        xStatus = xQueueReceive(xQueue, &lReceivedValue, xTicksToWait);
+        xStatus = xQueueReceive(xScheduledCarsQueue, &lReceivedValue, xTicksToWait);
 
         if (xStatus == pdPASS)
         {
-            console_print("Received = %d\r\n", lReceivedValue);
+            console_print("Received = %d\r\n", lReceivedValue.id);
         }
         else
         {
