@@ -25,6 +25,8 @@
 #include "semphr.h"
 #include "console.h"
 
+#include "scheduler_task.h"
+
 volatile uint32_t ulIdleCycleCount = 0UL;
 
 StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
@@ -195,8 +197,8 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
 }
 
-void vApplicationIdleHook(void)
-{
-    ulIdleCycleCount++;
-}
+// void vApplicationIdleHook(void)
+// {
+//     ulIdleCycleCount++;
+// }
 
