@@ -17,14 +17,22 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <errno.h>
+#include <stdbool.h>
+
 
 /* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
-#include "console.h"
 
+
+/* FreeRTOS coreMQTT-Agent  includes. */
+// #include "core_mqtt_config.h"
+#include "core_mqtt_agent.h"
+
+/* source includes */
+#include "console.h"
 #include "types.h"
 
 #include "scheduler_task.h"
@@ -53,12 +61,20 @@ int main( void )
     Car_t car_1 = {
         .id = 1,
         .direction = NW,
-        .poll_time = 12.4
+        .poll_time = 12.4,
+        .is_scheduled = false
     };
     Car_t car_2 = {
         .id = 2,
         .direction = NW,
-        .poll_time = 15
+        .poll_time = 15,
+        .is_scheduled = false
+    };
+    Car_t car_3 = {
+        .id = 3,
+        .direction = NW,
+        .poll_time = 9,
+        .is_scheduled = false
     };
 
 
@@ -70,8 +86,9 @@ int main( void )
     xTaskCreate(vSchedulerTask, "Scheduler", 1000, NULL, 1, NULL);
     // xTaskCreate(vContinousTask, "Task_1", 1000, "CONTINOUS TASK 1", 1, NULL);
     // xTaskCreate(vContinousTask, "Task_2", 1000, "CONTINOUS TASK 2", 1, NULL);
-    xTaskCreate(vSenderTask, "Sender_1", 1000, (void *)&car_1, 1, NULL);
-    xTaskCreate(vSenderTask, "Sender_2", 1000, (void*)&car_2, 1, NULL);
+    xTaskCreate(vSenderTask, "Sender_1", 1000, (void *)&car_2, 1, NULL);
+    xTaskCreate(vSenderTask, "Sender_2", 1000, (void*)&car_1, 1, NULL);
+    xTaskCreate(vSenderTask, "Sender_3", 1000, (void*)&car_3, 1, NULL);
     xTaskCreate(vReceiverTask, "Receiver", 1000, NULL, 1, NULL);
     // xTaskCreate(vPeriodicTask, "Task_3", 1000, "PERIODIC TASK 3", 10, NULL);
 
@@ -98,6 +115,7 @@ static void vSenderTask( void *pvParameters )
         if (xStatus != pdPASS) {
             console_print("COULD NOT SEND\n");
         }
+        vTaskDelay(pdMS_TO_TICKS(2000));
         /* Delay for a period. */
         // vTaskDelayUntil(&xLastWakeTime, xDelay);
     }
@@ -113,12 +131,13 @@ static void vReceiverTask( void *pvParameters )
     /* As per most tasks, this task is implemented in an infinite loop. */
     for( ;; )
     {
-        if (uxQueueMessagesWaiting(xScheduledCarsQueue) != 0)
-        {
-            console_print("Queue should have been empty\r\n");
-        }
+        // if (uxQueueMessagesWaiting(xScheduledCarsQueue) != 0)
+        // {
+        //     console_print("Queue should have been empty\r\n");
+        // }
 
-        xStatus = xQueueReceive(xScheduledCarsQueue, &lReceivedValue, xTicksToWait);
+        // xStatus = xQueueReceive(xScheduledCarsQueue, &lReceivedValue, xTicksToWait);
+        xStatus = xQueueReceive(xScheduledCarsQueue, &lReceivedValue, portMAX_DELAY);
 
         if (xStatus == pdPASS)
         {

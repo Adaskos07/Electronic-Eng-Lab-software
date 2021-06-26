@@ -1,6 +1,8 @@
 #ifndef TYPES_
 #define TYPES_
 
+#include <stdbool.h>
+
 
 typedef enum Direction {
     NW = 0,
@@ -21,6 +23,7 @@ typedef struct Car {
     int id;
     Direction_t direction;
     double poll_time;
+    _Bool is_scheduled;
 } Car_t;
 
 #endif

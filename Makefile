@@ -4,22 +4,20 @@ BIN                   := codesign
 BUILD_DIR             := ./build
 BUILD_DIR_ABS         := $(abspath $(BUILD_DIR))
 
-# FREERTOS_DIR_REL      := ../../../FreeRTOS
-# FREERTOS_DIR          := $(abspath $(FREERTOS_DIR_REL))
-
-# FREERTOS_PLUS_DIR_REL := ../../../FreeRTOS-Plus
-# FREERTOS_PLUS_DIR     := $(abspath $(FREERTOS_PLUS_DIR_REL))
-
-# KERNEL_DIR            := $(abspath ./FreeRTOS-Kernel)
 KERNEL_DIR            := FreeRTOS-Kernel
-# TRACE_DIR             := $(abspath ./FreeRTOS-Plus-Trace)
+
 TRACE_DIR             := FreeRTOS-Plus-Trace
+MQTT_CORE_DIR         := coreMQTT-Agent/source/dependency/coreMQTT
+MQTT_AGENT_DIR        := coreMQTT-Agent
 
 INCLUDE_DIRS          := -I.
 INCLUDE_DIRS          += -I${KERNEL_DIR}/include
 INCLUDE_DIRS          += -I${KERNEL_DIR}/portable/ThirdParty/GCC/Posix
 INCLUDE_DIRS          += -I${KERNEL_DIR}/portable/ThirdParty/GCC/Posix/utils
-# INCLUDE_DIRS          += -I${FREERTOS_DIR}/Demo/Common/include
+INCLUDE_DIRS          += -I${MQTT_CORE_DIR}/source/include
+INCLUDE_DIRS          += -I${MQTT_CORE_DIR}/source/interface
+INCLUDE_DIRS          += -I${MQTT_AGENT_DIR}/source/include
+
 INCLUDE_DIRS          += -I${TRACE_DIR}/Include
 
 SOURCE_FILES          := $(wildcard *.c)
@@ -29,11 +27,16 @@ SOURCE_FILES          += ${KERNEL_DIR}/portable/MemMang/heap_3.c
 # posix port
 SOURCE_FILES          += ${KERNEL_DIR}/portable/ThirdParty/GCC/Posix/utils/wait_for_event.c
 SOURCE_FILES          += ${KERNEL_DIR}/portable/ThirdParty/GCC/Posix/port.c
+# core mqtt
+SOURCE_FILES          += ${MQTT_CORE_DIR}/source/core_mqtt_serializer.c
+SOURCE_FILES          += ${MQTT_CORE_DIR}/source/core_mqtt_state.c
+SOURCE_FILES          += ${MQTT_CORE_DIR}/source/core_mqtt.c
+# mqtt agent
+SOURCE_FILES          += ${MQTT_AGENT_DIR}/source/core_mqtt_agent_command_functions.c
+SOURCE_FILES          += ${MQTT_AGENT_DIR}/source/core_mqtt_agent.c
 
-# Demo library.
-# SOURCE_FILES          += ${FREERTOS_DIR}/Demo/Common/Minimal/AbortDelay.c
-# SOURCE_FILES          += ${FREERTOS_DIR}/Demo/Common/Minimal/BlockQ.c
-# SOURCE_FILES          += ${FREERTOS_DIR}/Demo/Common/Minimal/blocktim.c
+
+
 
 
 # Trace library.

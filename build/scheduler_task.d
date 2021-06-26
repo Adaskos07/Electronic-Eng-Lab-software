@@ -1,4 +1,4 @@
-build/scheduler_task.o: scheduler_task.c scheduler_task.h types.h \
+build/scheduler_task.o: scheduler_task.c console.h types.h \
  FreeRTOS-Kernel/include/FreeRTOS.h FreeRTOSConfig.h \
  FreeRTOS-Plus-Trace/Include/trcRecorder.h trcConfig.h \
  FreeRTOS-Plus-Trace/Include/trcPortDefines.h trcSnapshotConfig.h \
@@ -10,4 +10,4 @@ build/scheduler_task.o: scheduler_task.c scheduler_task.h types.h \
  FreeRTOS-Kernel/portable/ThirdParty/GCC/Posix/portmacro.h \
  FreeRTOS-Kernel/include/mpu_wrappers.h FreeRTOS-Kernel/include/semphr.h \
  FreeRTOS-Kernel/include/queue.h FreeRTOS-Kernel/include/task.h \
- FreeRTOS-Kernel/include/list.h console.h
+ FreeRTOS-Kernel/include/list.h

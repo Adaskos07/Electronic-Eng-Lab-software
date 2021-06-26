@@ -1,9 +1,15 @@
-#include "scheduler_task.h"
-
 #include <stdlib.h>
 #include "console.h"
 
-int car_comparator(const void* c1, const void* c2) {
+#include "types.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+
+
+extern QueueHandle_t xUnscheduledCarsQueue;
+extern QueueHandle_t xScheduledCarsQueue;
+
+static int car_comparator(const void* c1, const void* c2) {
     Car_t* car_1 = (Car_t*)c1;
     Car_t* car_2 = (Car_t*)c2;
 
@@ -23,6 +29,7 @@ void  vSchedulerTask(void *pvParameters) {
         for (int i = 1; i < 4; i++) {
             vTaskDelay(pdMS_TO_TICKS(50));
 
+
             if (uxQueueMessagesWaiting(xUnscheduledCarsQueue) == 0) {
                 break;
             }
@@ -33,16 +40,20 @@ void  vSchedulerTask(void *pvParameters) {
         }
 
         if (buffer_fill == 1) {
-            xStatus = xQueueSendToBack( xScheduledCarsQueue, &xReadBuffer[0], 0);
             console_print("Single car received, pushed immediately...\r\n");
+            xReadBuffer[0].is_scheduled = true;
+            xStatus = xQueueSendToBack( xScheduledCarsQueue, &xReadBuffer[0], 0);
         }
         else {
             qsort(xReadBuffer, buffer_fill, sizeof(Car_t), car_comparator);
 
             for (int i = 0; i < buffer_fill; i++) {
+                console_print("Car %lf schduled\r\n", xReadBuffer[i].poll_time);
+                xReadBuffer[i].is_scheduled = true;
                 xStatus = xQueueSendToBack( xScheduledCarsQueue, &xReadBuffer[i], 0);
-                console_print("Many cars received, all pushed...\r\n");
+
             }
+            console_print("Many cars received, all pushed...\r\n");
         }
     }
 

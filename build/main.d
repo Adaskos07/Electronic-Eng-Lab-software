@@ -10,4 +10,14 @@ build/main.o: main.c FreeRTOS-Kernel/include/FreeRTOS.h FreeRTOSConfig.h \
  FreeRTOS-Kernel/include/mpu_wrappers.h FreeRTOS-Kernel/include/task.h \
  FreeRTOS-Kernel/include/list.h FreeRTOS-Kernel/include/timers.h \
  FreeRTOS-Kernel/include/task.h FreeRTOS-Kernel/include/semphr.h \
- FreeRTOS-Kernel/include/queue.h console.h types.h scheduler_task.h
+ FreeRTOS-Kernel/include/queue.h \
+ coreMQTT-Agent/source/include/core_mqtt_agent.h \
+ coreMQTT-Agent/source/dependency/coreMQTT/source/include/core_mqtt.h \
+ core_mqtt_config.h \
+ coreMQTT-Agent/source/dependency/coreMQTT/source/include/core_mqtt_config_defaults.h \
+ coreMQTT-Agent/source/dependency/coreMQTT/source/include/core_mqtt_serializer.h \
+ coreMQTT-Agent/source/dependency/coreMQTT/source/interface/transport_interface.h \
+ coreMQTT-Agent/source/dependency/coreMQTT/source/include/core_mqtt_state.h \
+ coreMQTT-Agent/source/dependency/coreMQTT/source/include/core_mqtt.h \
+ coreMQTT-Agent/source/include/core_mqtt_agent_message_interface.h \
+ console.h types.h scheduler_task.h
