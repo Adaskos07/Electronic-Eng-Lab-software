@@ -159,7 +159,7 @@ extern void vAssertCalled( const char * const pcFileName,
 /* networking definitions */
 #define configMAC_ISR_SIMULATOR_PRIORITY    ( configMAX_PRIORITIES - 1 )
 
-#define ipconfigUSE_NETWORK_EVENT_HOOK 1
+#define ipconfigUSE_NETWORK_EVENT_HOOK 0
 //#define ipconfigSOCK_DEFAULT_RECEIVE_BLOCK_TIME  pdMS_TO_TICKS(5000)
 #define configNETWORK_INTERFACE_TO_USE 1L
 

@@ -222,24 +222,6 @@ void vContinousTask( void *pvParameters )
 }
 
 
-/* Called by FreeRTOS+TCP when the network connects or disconnects.  Disconnect
- * events are only received if implemented in the MAC driver. */
-void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
-{
-    static BaseType_t xTasksAlreadyCreated = pdFALSE;
-
-    /* If the network has just come up...*/
-    if( eNetworkEvent == eNetworkUp )
-    {
-        /* Create the tasks that use the IP stack if they have not already been
-         * created. */
-        if( xTasksAlreadyCreated == pdFALSE )
-        {
-            xTasksAlreadyCreated = pdTRUE;
-        }
-    }
-}
-
 UBaseType_t uxRand( void )
 {
     const uint32_t ulMultiplier = 0x015a4e35UL, ulIncrement = 1UL;
