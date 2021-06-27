@@ -2,7 +2,7 @@
 #define TYPES_
 
 #include <stdbool.h>
-
+#include <stdint.h>
 
 typedef enum Direction {
     NW = 0,
@@ -22,8 +22,8 @@ typedef enum Direction {
 typedef struct Car {
     int id;
     Direction_t direction;
-    double poll_time;
-    _Bool is_scheduled;
+    uintmax_t poll_time;
+    bool is_scheduled;
 } Car_t;
 
 #endif

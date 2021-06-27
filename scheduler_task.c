@@ -16,7 +16,6 @@ static int car_comparator(const void* c1, const void* c2) {
     return car_1->poll_time - car_2->poll_time;
 }
 
-
 void  vSchedulerTask(void *pvParameters) {
 
     Car_t xReadBuffer[4];
@@ -28,7 +27,6 @@ void  vSchedulerTask(void *pvParameters) {
         int buffer_fill = 1;
         for (int i = 1; i < 4; i++) {
             vTaskDelay(pdMS_TO_TICKS(50));
-
 
             if (uxQueueMessagesWaiting(xUnscheduledCarsQueue) == 0) {
                 break;
@@ -48,13 +46,11 @@ void  vSchedulerTask(void *pvParameters) {
             qsort(xReadBuffer, buffer_fill, sizeof(Car_t), car_comparator);
 
             for (int i = 0; i < buffer_fill; i++) {
-                console_print("Car %lf schduled\r\n", xReadBuffer[i].poll_time);
+                console_print("Car %d schduled\r\n", xReadBuffer[i].poll_time);
                 xReadBuffer[i].is_scheduled = true;
                 xStatus = xQueueSendToBack( xScheduledCarsQueue, &xReadBuffer[i], 0);
-
             }
             console_print("Many cars received, all pushed...\r\n");
         }
     }
-
 }

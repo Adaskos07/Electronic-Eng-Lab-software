@@ -41,6 +41,7 @@
 #include "types.h"
 
 #include "scheduler_task.h"
+#include "resolver_task.h"
 
 StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 UBaseType_t uxRand( void );
@@ -86,30 +87,30 @@ int main( void )
     Car_t car_1 = {
         .id = 1,
         .direction = NW,
-        .poll_time = 12.4,
+        .poll_time = 1000,
         .is_scheduled = false
     };
     Car_t car_2 = {
         .id = 2,
         .direction = NW,
-        .poll_time = 15,
+        .poll_time = 1700,
         .is_scheduled = false
     };
     Car_t car_3 = {
         .id = 3,
         .direction = NW,
-        .poll_time = 9,
+        .poll_time = 1200,
         .is_scheduled = false
     };
 
 
     console_init();
     prvMiscInitialisation();
-    FreeRTOS_IPInit( ucIPAddress,
-                    ucNetMask,
-                    ucGatewayAddress,
-                    ucDNSServerAddress,
-                    ucMACAddress );
+    // FreeRTOS_IPInit( ucIPAddress,
+    //                 ucNetMask,
+    //                 ucGatewayAddress,
+    //                 ucDNSServerAddress,
+    //                 ucMACAddress );
 
 
     xUnscheduledCarsQueue = xQueueCreate(10, sizeof(Car_t));
@@ -117,12 +118,13 @@ int main( void )
     // xQueue = xQueueCreate(10, sizeof(Car_t));
 
     xTaskCreate(vSchedulerTask, "Scheduler", 1000, NULL, 1, NULL);
+    xTaskCreate(vResolverTask, "Resolver", 1000, NULL, 1, NULL);
     // xTaskCreate(vContinousTask, "Task_1", 1000, "CONTINOUS TASK 1", 1, NULL);
     // xTaskCreate(vContinousTask, "Task_2", 1000, "CONTINOUS TASK 2", 1, NULL);
     xTaskCreate(vSenderTask, "Sender_1", 1000, (void *)&car_2, 1, NULL);
     xTaskCreate(vSenderTask, "Sender_2", 1000, (void*)&car_1, 1, NULL);
     xTaskCreate(vSenderTask, "Sender_3", 1000, (void*)&car_3, 1, NULL);
-    xTaskCreate(vReceiverTask, "Receiver", 1000, NULL, 1, NULL);
+    // xTaskCreate(vReceiverTask, "Receiver", 1000, NULL, 1, NULL);
     // xTaskCreate(vPeriodicTask, "Task_3", 1000, "PERIODIC TASK 3", 10, NULL);
 
     vTaskStartScheduler();
@@ -244,13 +246,7 @@ void prvMiscInitialisation( void )
 
     /* Seed the random number generator. */
     time( &xTimeNow );
-    FreeRTOS_debug_printf( ( "Seed for randomiser: %lu\n", xTimeNow ) );
     prvSRand( ( uint32_t ) xTimeNow );
-    FreeRTOS_debug_printf( ( "Random numbers: %08X %08X %08X %08X\n",
-                             ipconfigRAND32(),
-                             ipconfigRAND32(),
-                             ipconfigRAND32(),
-                             ipconfigRAND32() ) );
 }
 
 extern uint32_t ulApplicationGetNextSequenceNumber( uint32_t ulSourceAddress,
@@ -328,8 +324,7 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 void vLoggingPrintf( const char *pcFormat,
                      ... )
 {
-va_list arg;
-
+    va_list arg;
     va_start( arg, pcFormat );
     vprintf( pcFormat, arg );
     va_end( arg );
