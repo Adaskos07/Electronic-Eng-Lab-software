@@ -46,7 +46,7 @@ void  vSchedulerTask(void *pvParameters) {
             qsort(xReadBuffer, buffer_fill, sizeof(Car_t), car_comparator);
 
             for (int i = 0; i < buffer_fill; i++) {
-                console_print("Car %d schduled\r\n", xReadBuffer[i].poll_time);
+                console_print("Car %d scheduled\r\n", xReadBuffer[i].id);
                 xReadBuffer[i].is_scheduled = true;
                 xStatus = xQueueSendToBack( xScheduledCarsQueue, &xReadBuffer[i], 0);
             }

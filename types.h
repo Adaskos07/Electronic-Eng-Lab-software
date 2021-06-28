@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
 typedef enum Direction {
     NW = 0,
     NS = 1,
@@ -25,5 +26,10 @@ typedef struct Car {
     uintmax_t poll_time;
     bool is_scheduled;
 } Car_t;
+
+typedef struct rc_settings {
+    int delay;
+    int from_lane;
+} rc_settings_t;
 
 #endif

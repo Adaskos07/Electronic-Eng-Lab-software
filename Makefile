@@ -23,7 +23,7 @@ INCLUDE_DIRS          += -I${TCP_DIR}/portable/NetworkInterface/linux/
 INCLUDE_DIRS          += -I${TCP_DIR}/include/
 INCLUDE_DIRS          += -I${TCP_DIR}/portable/Compiler/GCC/
 
-INCLUDE_DIRS          += -I${TRACE_DIR}/Include
+# INCLUDE_DIRS          += -I${TRACE_DIR}/Include
 
 SOURCE_FILES          := $(wildcard *.c)
 SOURCE_FILES          += $(wildcard ${KERNEL_DIR}/*.c)
@@ -56,11 +56,11 @@ SOURCE_FILES          += ${TCP_DIR}/portable/NetworkInterface/linux/NetworkInter
 
 
 
-# Trace library.
-SOURCE_FILES          += ${TRACE_DIR}/trcKernelPort.c
-SOURCE_FILES          += ${TRACE_DIR}/trcSnapshotRecorder.c
-SOURCE_FILES          += ${TRACE_DIR}/trcStreamingRecorder.c
-SOURCE_FILES          += ${TRACE_DIR}/streamports/File/trcStreamingPort.c
+# # Trace library.
+# SOURCE_FILES          += ${TRACE_DIR}/trcKernelPort.c
+# SOURCE_FILES          += ${TRACE_DIR}/trcSnapshotRecorder.c
+# SOURCE_FILES          += ${TRACE_DIR}/trcStreamingRecorder.c
+# SOURCE_FILES          += ${TRACE_DIR}/streamports/File/trcStreamingPort.c
 
 
 CFLAGS                :=    -ggdb3 -DprojCOVERAGE_TEST=0 -D_WINDOWS_
